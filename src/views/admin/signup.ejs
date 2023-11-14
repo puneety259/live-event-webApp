@@ -1,0 +1,35 @@
+<!-- views/admin/registration.ejs -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Signup</title>
+</head>
+<body>
+    <h1>Admin Registration</h1>
+
+    <form action="/admin/signup" method="POST">
+        <!-- Add form fields for fullName, email, phone, password, and confirmPassword -->
+        <label for="fullName">Full Name:</label>
+        <input type="text" name="fullName" required><br>
+
+        <label for="email">Email:</label>
+        <input type="email" name="email" required><br>
+
+        <label for="phone">Phone:</label>
+        <input type="text" name="phone" required><br>
+
+        <label for="password">Password:</label>
+        <input type="password" name="password" required><br>
+
+        <label for="confirmPassword">Confirm Password:</label>
+        <input type="password" name="confirmPassword" required><br>
+
+        <button type="submit">Register</button>
+    </form>
+    <%
+    if (msg) { %>
+        <p><%= msg %></p>
+      <% }
+    %>
+</body>
+</html>
