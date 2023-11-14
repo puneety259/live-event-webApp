@@ -18,3 +18,4 @@ router.post('/forgotPassword', forgotPassword);
 router.get('/resetPassword', resetPassword);
 
 module.exports = router;
+

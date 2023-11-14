@@ -19,7 +19,7 @@ const sendMail = async (email, fullName, token, res) => {
             auth: {
                 user: config.emailUser,
                 pass: config.emailPassword,
-            },
+            }, 
         });
 
         const info = {

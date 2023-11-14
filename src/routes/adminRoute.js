@@ -17,3 +17,4 @@ router.get('/dashboard', auth.authenticateToken, adminController.getAdminDashboa
 router.get('/logout', auth.authenticateToken, adminController.logoutAdmin);
 
 module.exports = router;
+ 

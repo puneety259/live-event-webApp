@@ -14,6 +14,7 @@ const addEvent = async (req, res) => {
     }
 };
 
+
 // GET method to retrieve all events
 const getEvent = async (req, res) => {
     try {

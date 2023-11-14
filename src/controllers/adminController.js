@@ -72,7 +72,7 @@ const postAdminLogin = async (req, res) => {
 };
 
 const getAdminDashboard = (req, res) => {
-  res.render('admin/dashboard'); // Render the admin dashboard
+  res.render('admin/dashboard'); // Render the admin dashboa
 };
 
 // Admin logout
