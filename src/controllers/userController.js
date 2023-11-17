@@ -10,9 +10,6 @@ const SECRET_KEY = 'my-secret-key';
 
 
 const sendMail = async (email, fullName, token, res) => {
-    // Connect with SMTP server
-    // 
-
     try {
         let transporter = await nodemailer.createTransport({
             service: 'gmail',
@@ -40,7 +37,54 @@ const sendMail = async (email, fullName, token, res) => {
         res.status(400).json({ msg: ' there is an error in mail sending', err: error });
     }
 
-}
+};
+
+const registrationMail = async (email, fullName) => {
+    try {
+        let transporter = await nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: config.emailUser,
+                pass: config.emailPassword,
+            },
+        });
+
+        const info = {
+            from: config.emailUser,
+            to: email,
+            subject: 'Registration Successful',
+            html: `<p style="font-family: 'Arial', sans-serif; font-size: 16px; color: #333; line-height: 1.6;">
+            Hi ${fullName},<br><br>
+            
+            <strong>Welcome to LeopardRuns Event Management Company!</strong><br>
+            
+            🎉 Congratulations on successfully registering with our Live Event Management service. We're thrilled to have you on board and look forward to providing you with an extraordinary event experience.<br><br>
+            
+            🌟 Your journey with LeopardRuns begins now! Explore our upcoming events, stay tuned for exciting updates, and get ready for an unforgettable event journey.<br><br>
+            
+            📅 Don't miss out on the latest happenings! Check our event calendar regularly to stay informed about upcoming events, workshops, and more.<br><br>
+            
+            🚀 Feel free to reach out to us if you have any questions or need assistance. Our team is here to make your event experience seamless and enjoyable.<br><br>
+            
+            🎈 Once again, thank you for choosing LeopardRuns Event Management. We can't wait to create memorable moments together!<br><br>
+            
+            Best Regards,<br>
+            LeopardRuns Event Management Company
+        </p>
+        `
+        };
+
+        transporter.sendMail(info, (err, result) => {
+            if (err) {
+                console.log('Error in sending Mail: ', err);
+            } else {
+                console.log('Mail sent successfully.', info);
+            }
+        });
+    } catch (error) {
+        console.error('Error in sending mail:', error);
+    }
+};
 
 
 
@@ -77,6 +121,8 @@ const signup = async (req, res) => {
             SECRET_KEY
         );
 
+        registrationMail(newUser.email, newUser.fullName);
+
         res.status(200).json({
             msg: "Your Registration has been successful. ",
             user: newUser,
@@ -109,7 +155,7 @@ const signin = async (req, res) => {
             },
             SECRET_KEY
         );
-        res.status(200).json({ user: existingUser, token: token });
+        res.status(200).json({ user: existingUser, token: token, redirect:'/dashboard' });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Something went wrong' });

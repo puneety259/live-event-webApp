@@ -1,13 +1,53 @@
-const express = require('express');
-const router = express.Router();
+const userModel = require('../models/user')
+const config = require('../config/config');
 const Event = require('../models/Event');
+const nodemailer = require('nodemailer');
 
-// POST method to create a new event
+const sendEventNotification = async (eventDetails, userEmails) => {
+    try {
+        let transporter = await nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: config.emailUser,
+                pass: config.emailPassword,
+            },
+        });
+
+        const info = {
+            from: config.emailUser,
+            to: userEmails.join(','), // separated list of user emails
+            subject: 'New Event Created',
+            html: `<p>Hi there,<br><br>A new event has been created:<br><br>
+                <strong>Event Name:</strong> \${eventDetails.title}<br>
+                <strong>Description:</strong> \${eventDetails.description}<br>
+                <strong>Date:</strong> \${eventDetails.date}<br>
+                <strong>Location:</strong> \${eventDetails.location}<br><br>
+                Regards,<br>Your Event Management Team</p>`
+        };
+
+        transporter.sendMail(info, (err, result) => {
+            if (err) {
+                console.log('Error in sending Mail: ', err);
+            } else {
+                console.log('Mail sent successfully.', info);
+            }
+        });
+    } catch (error) {
+        console.error('Error in sending mail:', error);
+    }
+};
+
 const addEvent = async (req, res) => {
     try {
         const eventData = req.body;
         const event = new Event(eventData);
         const savedEvent = await event.save();
+
+        const allUsers = await userModel.find({}, 'email');
+        const userEmails = allUsers.map(user => user.email);
+
+        sendEventNotification(savedEvent, userEmails);
+
         res.status(201).json(savedEvent);
     } catch (err) {
         res.status(400).json({ error: err.message });
@@ -15,7 +55,6 @@ const addEvent = async (req, res) => {
 };
 
 
-// GET method to retrieve all events
 const getEvent = async (req, res) => {
     try {
         const events = await Event.find();
@@ -25,10 +64,11 @@ const getEvent = async (req, res) => {
     }
 };
 
-// PUT method to update an event by ID
+
+
 const updateEvent = async (req, res) => {
     try {
-        const eventId = req.params.id; // Assuming the event ID is passed as a route parameter
+        const eventId = req.params.id; 
         const eventData = req.body;
         const updatedEvent = await Event.findByIdAndUpdate(eventId, eventData, { new: true });
 
@@ -46,10 +86,10 @@ const updateEvent = async (req, res) => {
     }
 };
 
-// PATCH method to partially update an event by ID
+
 const UpdateEventByID = async (req, res) => {
     try {
-        const eventId = req.params.id; // Assuming the event ID is passed as a route parameter
+        const eventId = req.params.id; 
         const eventData = req.body;
 
         const updatedEvent = await Event.findByIdAndUpdate(eventId, eventData, { new: true });
@@ -72,10 +112,9 @@ const UpdateEventByID = async (req, res) => {
 };
 
 
-// GET method to retrieve an event by ID
 const getEventByID = async (req, res) => {
     try {
-        const eventId = req.params.id; // Assuming the event ID is passed as a route parameter
+        const eventId = req.params.id; 
         const event = await Event.findById(eventId);
         if (!event) {
             return res.status(404).json({
@@ -88,9 +127,9 @@ const getEventByID = async (req, res) => {
     }
 };
 
-// DELETE method to delete an event by ID
+
 const deleteEventByID = (req, res) => {
-    const eventId = req.params.id; // Assuming the event ID is passed as a route parameter
+    const eventId = req.params.id; 
     Event.findByIdAndRemove(eventId)
         .then((deletedEvent) => {
             if (deletedEvent) {

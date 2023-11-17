@@ -9,7 +9,7 @@ const {
 } = require('../controllers/eventController');
 const router = express.Router();
 
-const Event = require('../models/Event'); // Correct the path to your model if necessar
+const Event = require('../models/Event')
 
 router.post('/addEvent', addEvent);
 router.get('/getEvent', getEvent);
