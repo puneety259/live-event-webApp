@@ -1,7 +1,8 @@
 
 const config = {
-    emailUser: 'demopuneet2023@gmail.com',
-    emailPassword: 'wbbzjzqukbizxshp'
+    emailUser: 'eventdlogin@gmail.com',
+    emailPassword: 'pfsmgcccmrlfayyd',
+    fromName: 'DreamCraft Events'
 }
 
 module.exports = config;

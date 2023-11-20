@@ -14,7 +14,7 @@ const sendEventNotification = async (eventDetails, userEmails) => {
         });
 
         const info = {
-            from: config.emailUser,
+            from: `${config.fromName} <${config.emailUser}>`,
             to: userEmails.join(','), // separated list of user emails
             subject: 'New Event Created',
             html: `<p>Hi there,<br><br>A new event has been created:<br><br>
@@ -22,7 +22,7 @@ const sendEventNotification = async (eventDetails, userEmails) => {
                 <strong>Description:</strong> \${eventDetails.description}<br>
                 <strong>Date:</strong> \${eventDetails.date}<br>
                 <strong>Location:</strong> \${eventDetails.location}<br><br>
-                Regards,<br>Your Event Management Team</p>`
+                Regards,<br>DreamCraft Events</p>`
         };
 
         transporter.sendMail(info, (err, result) => {

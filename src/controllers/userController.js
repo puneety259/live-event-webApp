@@ -20,10 +20,25 @@ const sendMail = async (email, fullName, token, res) => {
         });
 
         const info = {
-            from: config.emailUser,
+            from: `${config.fromName} <${config.emailUser}>`,
             to: email,
             subject: 'Password Reset',
-            html: '<p>Hi ' + fullName + ', <br><br> You have requested to reset your password. Please click the following link to reset your password:<br><br> <a href="http://localhost:3000/users/resetPassword?token=' + token + '">reset your password</a><br><br>If you did not request a password reset, please ignore this email. Your password will remain unchanged.<br><br>Thank you for using our service.</p>'
+            html: `<p>
+            Hi ${fullName},<br><br>
+
+            <strong class="welcome-heading">Welcome to DreamCraft Events</strong><br><br>
+
+            You have requested to reset your password. Please click the following link to reset your password:<br><br>
+
+            <a href="http://localhost:3000/users/resetPassword?token=${token}" class="reset-link">Reset Your Password</a><br><br>
+
+            If you did not request a password reset, please ignore this email. Your password will remain unchanged.<br><br>
+
+            Thank you for using our service.<br><br>
+
+            Best Regards,<br>
+            DreamCraft Events
+        </p>`
         };
 
         transporter.sendMail(info, (err, result) => {
@@ -48,28 +63,27 @@ const registrationMail = async (email, fullName) => {
                 pass: config.emailPassword,
             },
         });
-
         const info = {
-            from: config.emailUser,
+            from: `${config.fromName} <${config.emailUser}>`,
             to: email,
             subject: 'Registration Successful',
             html: `<p style="font-family: 'Arial', sans-serif; font-size: 16px; color: #333; line-height: 1.6;">
             Hi ${fullName},<br><br>
             
-            <strong>Welcome to LeopardRuns Event Management Company!</strong><br>
+            <strong>Welcome to DreamCraft Events</strong><br>
             
             🎉 Congratulations on successfully registering with our Live Event Management service. We're thrilled to have you on board and look forward to providing you with an extraordinary event experience.<br><br>
             
-            🌟 Your journey with LeopardRuns begins now! Explore our upcoming events, stay tuned for exciting updates, and get ready for an unforgettable event journey.<br><br>
+            🌟 Your journey with DreamCraft Events begins now! Explore our upcoming events, stay tuned for exciting updates, and get ready for an unforgettable event journey.<br><br>
             
             📅 Don't miss out on the latest happenings! Check our event calendar regularly to stay informed about upcoming events, workshops, and more.<br><br>
             
             🚀 Feel free to reach out to us if you have any questions or need assistance. Our team is here to make your event experience seamless and enjoyable.<br><br>
             
-            🎈 Once again, thank you for choosing LeopardRuns Event Management. We can't wait to create memorable moments together!<br><br>
+            🎈 Once again, thank you for choosing DreamCraft Events. We can't wait to create memorable moments together!<br><br>
             
             Best Regards,<br>
-            LeopardRuns Event Management Company
+            DreamCraft Events
         </p>
         `
         };
@@ -228,5 +242,20 @@ const resetPassword = async (req, res) => {
 }
 
 
+const getAllUsers = async (req, res) => {
+    try {
+        const users = await userModel.find();
+        res.status(200).json({ users: users });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Something went wrong while fetching users' });
+    }
+};
 
-module.exports = { signup, signin, updatePassword, forgotPassword, resetPassword };
+const logoutUser = (req, res) => {
+    res.clearCookie('jwt');
+
+    res.redirect('/login');
+  };
+
+module.exports = { signup, signin, updatePassword, forgotPassword, resetPassword, getAllUsers, logoutUser };
