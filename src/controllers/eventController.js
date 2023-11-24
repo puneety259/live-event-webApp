@@ -18,11 +18,13 @@ const sendEventNotification = async (eventDetails, userEmails) => {
             to: userEmails.join(','), // separated list of user emails
             subject: 'New Event Created',
             html: `<p>Hi there,<br><br>A new event has been created:<br><br>
-                <strong>Event Name:</strong> \${eventDetails.title}<br>
-                <strong>Description:</strong> \${eventDetails.description}<br>
-                <strong>Date:</strong> \${eventDetails.date}<br>
-                <strong>Location:</strong> \${eventDetails.location}<br><br>
-                Regards,<br>DreamCraft Events</p>`
+            <strong>Event Name:</strong> ${eventDetails.title}<br>
+            <strong>Description:</strong> ${eventDetails.description}<br>
+            <strong>Date:</strong> ${eventDetails.date}<br>
+            <strong>Location:</strong> ${eventDetails.location}<br><br>
+            Regards,<br>DreamCraft Events
+        </p>
+        `
         };
 
         transporter.sendMail(info, (err, result) => {
