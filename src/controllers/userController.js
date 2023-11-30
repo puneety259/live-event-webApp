@@ -257,10 +257,25 @@ const getAllUsers = async (req, res) => {
     }
 };
 
+const findUserById = async (req, res) => {
+    const userId = req.params.id;
+    try {
+        const user = await userModel.findById(userId);
+        if (user) {
+            res.status(200).json({ user: user });
+        } else {
+            res.status(404).json({ message: 'User not found' });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Something went wrong while fetching the user' });
+    }
+};
+
+
 const logoutUser = (req, res) => {
     res.clearCookie('jwt');
-
     res.redirect('/login');
 };
 
-module.exports = { signup, signin, updatePassword, forgotPassword, resetPassword, getAllUsers, logoutUser };
+module.exports = { signup, signin, updatePassword, forgotPassword, resetPassword, getAllUsers, logoutUser, findUserById };

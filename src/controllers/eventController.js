@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const userModel = require('../models/user')
 const config = require('../config/config');
 const Event = require('../models/Event');
@@ -132,6 +133,12 @@ const getEventByID = async (req, res) => {
 
 const deleteEventByID = (req, res) => {
     const eventId = req.params.id; 
+
+    // Validate that eventId is a valid ObjectId
+    if (!mongoose.Types.ObjectId.isValid(eventId)) {
+        return res.status(400).json({ error: 'Invalid Event ID' });
+    }
+
     Event.findByIdAndRemove(eventId)
         .then((deletedEvent) => {
             if (deletedEvent) {

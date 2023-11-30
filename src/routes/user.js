@@ -1,17 +1,18 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const { signup, signin, updatePassword, forgotPassword, resetPassword,getAllUsers, logoutUser } = require('../controllers/userController');
+const { signup, signin, updatePassword, forgotPassword, resetPassword,getAllUsers, logoutUser, findUserById } = require('../controllers/userController');
 const router = express.Router();
-const userController = require('../controllers/userController');
+// const userController = require('../controllers/userController');
 
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: true }));
 
 router.post('/signup', signup);
-router.post('/auth/signin', signin);
+router.post('/auth/signin', signin);    
 router.get('/logout', logoutUser);
 
 router.get('/users',getAllUsers);
+router.get('/byId/:id', findUserById)
 //update password
 router.post('/updatePassword', updatePassword);
 //forgot password
