@@ -16,7 +16,7 @@ const sendEventNotification = async (eventDetails, userEmails) => {
 
         const info = {
             from: `${config.fromName} <${config.emailUser}>`,
-            to: userEmails.join(','), // separated list of user emails
+            bcc: userEmails, // separated list of user emails
             subject: 'New Event Created',
             html: `<p>Hi there,<br><br>A new event has been created:<br><br>
             <strong>Event Name:</strong> ${eventDetails.title}<br>

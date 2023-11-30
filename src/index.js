@@ -3,16 +3,16 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy; // Added missing import
+const LocalStrategy = require('passport-local').Strategy; 
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 
 
-// Import the User model (make sure the path is correct)
 const User = require('./models/user');
 const userRouter = require('./routes/user')
 const eventRouter = require('./routes/eventRoute')
-// Import your existing admin routes and controllers
+const contactUsRouter = require('./routes/contactUsRoute');
+
 const adminRouter = require('./routes/adminRoute');
 
 const app = express();
@@ -36,7 +36,7 @@ app.set('view engine', 'ejs');
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Configure the Local Strategy
+// Config the Local Strategy
 passport.use(new LocalStrategy(
     {
         usernameField: 'email',
@@ -50,7 +50,6 @@ passport.use(new LocalStrategy(
                 return done(null, false, { message: 'Incorrect email.' });
             }
 
-            // Replace this with your actual password comparison logic
             if (password !== user.password) {
                 return done(null, false, { message: 'Incorrect password.' });
             }
@@ -78,7 +77,7 @@ passport.deserializeUser(async (id, done) => {
 // Use the routes
 app.use('/users', userRouter);
 app.use('/events', eventRouter);
-
+app.use('/contact', contactUsRouter);
 // Use your admin routes
 app.use('/admin', adminRouter);
 
