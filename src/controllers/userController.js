@@ -30,7 +30,7 @@ const sendMail = async (email, fullName, token, res) => {
 
             You have requested to reset your password. Please click the following link to reset your password:<br><br>
 
-            <a href="http://localhost:3000/users/forgot-password/resetPassword?token=${token}">Reset Your Password</a><br><br>
+            <a href="http://localhost:4200/auth/reset">Reset Your Password</a><br><br>
 
             If you did not request a password reset, please ignore this email. Your password will remain unchanged.<br><br>
 
@@ -103,50 +103,55 @@ const registrationMail = async (email, fullName) => {
 
 
 
-const signup = async (req, res) => {
-    const { fullName, email, phone, password, confirmPassword } = req.body;
+    const signup = async (req, res) => {
+        const { fullName, email, phone, password, confirmPassword } = req.body;
 
-    try {
-        const existingUser = await userModel.findOne({ email: email });
-        if (existingUser) {
-            return res.status(400).json({ message: 'User already exists' });
+        try {
+            const existingUser = await userModel.findOne({ email: email });
+            if (existingUser) {
+                return res.status(400).json({ message: 'User already exists' });
+            }
+
+            if (!password || typeof password !== 'string' || password !== confirmPassword) {
+                return res.status(400).json({ message: "Password and Confirm Password don't match" });
+            }
+
+            if (!phone || typeof phone !== 'string' || !/^\d{10}$/.test(phone)) {
+                return res.status(400).json({ message: 'Phone number must be exactly 10 digits' });
+            }
+            
+
+            const hashPassword = await bcrypt.hash(password, 10);
+
+            const newUser = await userModel.create({
+                fullName: fullName,
+                email: email,
+                phone: phone,
+                password: hashPassword,
+                confirmPassword: hashPassword,
+                is_admin: 0
+            });
+
+            const token = jwt.sign(
+                {
+                    email: newUser.email,
+                    id: newUser._id,
+                },
+                SECRET_KEY
+            );
+
+            registrationMail(newUser.email, newUser.fullName);
+
+            res.status(200).json({
+                msg: "Your Registration has been successful. ",
+                user: newUser,
+                token: token,
+            });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ message: 'Your registration has been failed.' });
         }
-
-        if (!password || typeof password !== 'string' || password !== confirmPassword) {
-            return res.status(400).json({ message: "Password and Confirm Password don't match" });
-        }
-
-        const hashPassword = await bcrypt.hash(password, 10);
-
-        const newUser = await userModel.create({
-            fullName: fullName,
-            email: email,
-            phone: phone,
-            password: hashPassword,
-            confirmPassword: hashPassword,
-            is_admin: 0
-        });
-
-        const token = jwt.sign(
-            {
-                email: newUser.email,
-                id: newUser._id,
-            },
-            SECRET_KEY
-        );
-
-        registrationMail(newUser.email, newUser.fullName);
-
-        res.status(200).json({
-            msg: "Your Registration has been successful. ",
-            user: newUser,
-            token: token,
-        });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Your registration has been failed.' });
-    }
-};
+    };
 
 const signin = async (req, res) => {
     const { email, password } = req.body;
