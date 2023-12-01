@@ -16,7 +16,7 @@ const sendEventNotification = async (eventDetails, userEmails) => {
 
         const info = {
             from: `${config.fromName} <${config.emailUser}>`,
-            bcc: userEmails, // separated list of user emails
+            bcc: userEmails,
             subject: 'New Event Created',
             html: `<p>Hi there,<br><br>A new event has been created:<br><br>
             <strong>Event Name:</strong> ${eventDetails.title}<br>
@@ -134,7 +134,6 @@ const getEventByID = async (req, res) => {
 const deleteEventByID = (req, res) => {
     const eventId = req.params.id; 
 
-    // Validate that eventId is a valid ObjectId
     if (!mongoose.Types.ObjectId.isValid(eventId)) {
         return res.status(400).json({ error: 'Invalid Event ID' });
     }
